@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "slug": "galaxy-a07",
+    "title": "Galaxy A07",
+    "description": "",
+    "image": "https://m.media-amazon.com/images/I/51Adgl-DQtL._AC_SL1000_.jpg",
+    "amazonUrl": "https://amzn.to/41t8cOA",
+    "extraLinks": [],
+    "price": "R$ 660,89",
+    "originalPrice": "",
+    "rating": 4.7,
+    "pros": [],
+    "cons": [],
+    "badge": "",
+    "buttonText": "",
+    "enabled": true,
+    "id": "p_1776000250674"
+  }
+]
