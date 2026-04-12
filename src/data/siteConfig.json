@@ -1,41 +1,41 @@
 {
-    "name": "TechMaster 2026",
-    "description": "O seu guia definitivo para os melhores eletrônicos e gadgets de 2026. Reviews honestos e comparativos detalhados.",
-    "url": "https://meublog.com.br",
-    "author": "Autor",
-    "language": "pt-BR",
-    "logo": "",
-    "theme": {
-        "primary": "#4c1d95",
-        "accent": "#f472b6",
-        "font": "inter",
-        "dark": "#1E293B"
-    },
-    "social": {
-        "instagram": "",
-        "twitter": "",
-        "facebook": "",
-        "pinterest": "",
-        "youtube": "",
-        "linkedin": ""
-    },
-    "contact": {
-        "email": "",
-        "phone": "",
-        "address": "",
-        "name": ""
-    },
-    "legal": {
-        "terms_last_updated": "",
-        "privacy_last_updated": ""
-    },
-    "footer": {
-        "subscribeTitle": "Inscreva-se",
-        "subscribeBtn": "Inscrever Agora",
-        "col1Title": "Empresa",
-        "col2Title": "Links Rápidos",
-        "copyright": "Desenvolvido com amor para"
-    },
+  "name": "Zonex",
+  "description": "O seu guia definitivo para os melhores eletrônicos e gadgets de 2026. Reviews honestos e comparativos detalhados.",
+  "url": "https://meublog.com.br",
+  "author": "Autor",
+  "language": "pt-BR",
+  "logo": "",
+  "theme": {
+    "primary": "#4c1d95",
+    "accent": "#f472b6",
+    "font": "inter",
+    "dark": "#1E293B"
+  },
+  "social": {
+    "instagram": "",
+    "twitter": "",
+    "facebook": "",
+    "pinterest": "",
+    "youtube": "",
+    "linkedin": ""
+  },
+  "contact": {
+    "email": "",
     "phone": "",
-    "address": ""
+    "address": "",
+    "name": ""
+  },
+  "legal": {
+    "terms_last_updated": "",
+    "privacy_last_updated": ""
+  },
+  "footer": {
+    "subscribeTitle": "Inscreva-se",
+    "subscribeBtn": "Inscrever Agora",
+    "col1Title": "Empresa",
+    "col2Title": "Links Rápidos",
+    "copyright": "Desenvolvido com amor para"
+  },
+  "phone": "",
+  "address": ""
 }
