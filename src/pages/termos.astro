@@ -1,0 +1,25 @@
+---
+import BunzoLayout from '../layouts/BunzoLayout.astro';
+import Breadcrumb from '../components/bunzo/Breadcrumb.astro';
+import { readData } from '../lib/readData';
+
+const siteConfig = readData('siteConfig.json');
+const legalData = readData('terms.json', { title: 'Termos de Uso', content: [] });
+---
+
+<BunzoLayout title={legalData.title || "Termos de Uso"} description="Nossos termos de uso">
+  <Breadcrumb slug={legalData.title || "Termos de Uso"} />
+
+  <section class="py-section bg-white font-base">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="content prose prose-lg prose-primary max-w-none space-y-10">
+          {legalData.content?.map((section: any) => (
+              <div class="legal-section">
+                  <h2 class="text-2xl font-bold mb-4">{section.title}</h2>
+                  <div class="text-gray-600 leading-relaxed whitespace-pre-line">{section.text}</div>
+              </div>
+          ))}
+      </div>
+    </div>
+  </section>
+</BunzoLayout>

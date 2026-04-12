@@ -1,0 +1,18 @@
+{
+    "seo": {
+        "title": "Sobre Nós",
+        "description": "Saiba mais sobre este blog e nossa equipe.",
+        "image": ""
+    },
+    "hero": {
+        "title": "Sobre Nós",
+        "image": "",
+        "desc": "Substitua este texto com informações sobre o seu blog. Edite esta página no painel admin em /admin/sobre."
+    },
+    "content": {
+        "missionTitle": "Nossa Missão",
+        "missionText": "Descreva aqui a missão e os valores do seu blog.",
+        "teamTitle": "Nossa Equipe",
+        "teamText": "Apresente os autores e colaboradores do blog."
+    }
+}

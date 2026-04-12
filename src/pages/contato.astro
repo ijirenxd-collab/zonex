@@ -1,0 +1,105 @@
+---
+import BunzoLayout from '../layouts/BunzoLayout.astro';
+import Breadcrumb from '../components/bunzo/Breadcrumb.astro';
+import { readData } from '../lib/readData';
+
+const contactData = readData('contact.json');
+---
+
+<BunzoLayout title={`${contactData.title} - Bunzo`}>
+    <div class="contact-wrapper">
+        <Breadcrumb slug={contactData.title} />
+
+        <div class="py-section container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 mb-20">
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100 group hover:border-primary transition-colors">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="icofont-google-map"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Endereço</h3>
+                    <p class="text-gray-600">{contactData.address}</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100 group hover:border-primary transition-colors">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="icofont-phone"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Telefone</h3>
+                    <p class="text-gray-600">{contactData.phone}</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100 group hover:border-primary transition-colors">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <i class="icofont-envelope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-2">E-mail</h3>
+                    <p class="text-gray-600">{contactData.email}</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-start pb-20">
+                <div class="bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+                    <h2 class="text-3xl font-bold font-heading mb-8 text-primary">{contactData.formTitle}</h2>
+                    <form id="contactForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input type="text" id="name" name="name" placeholder="Seu Nome" required class="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:outline-none focus:border-primary transition-all">
+                            <input type="email" id="email" name="email" placeholder="Seu E-mail" required class="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:outline-none focus:border-primary transition-all">
+                        </div>
+                        <input type="text" id="subject" name="subject" placeholder="Assunto" required class="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:outline-none focus:border-primary transition-all">
+                        <textarea id="message" name="message" rows="5" placeholder="Sua Mensagem" required class="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:outline-none focus:border-primary transition-all"></textarea>
+                        <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-heading transition-all shadow-lg hover:shadow-primary/20">
+                            Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+                <div class="h-full min-h-[400px] rounded-2xl overflow-hidden shadow-xl grayscale hover:grayscale-0 transition-all border border-gray-100">
+                    <iframe 
+                        src={contactData.googleMapsUrl} 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</BunzoLayout>
+
+<script>
+    const form = document.getElementById('contactForm') as HTMLFormElement;
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = 'Enviando...';
+
+        const formData = new FormData(form);
+        const data = {
+            type: 'contact',
+            name: formData.get('name'),
+            email: formData.get('email'),
+            subject: formData.get('subject'),
+            message: formData.get('message'),
+        };
+
+        try {
+            const res = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                (window as any).showBunzoToast('Mensagem enviada com sucesso!');
+                form.reset();
+            } else {
+                (window as any).showBunzoToast('Erro ao enviar mensagem.', 'error');
+            }
+        } catch (err) {
+            (window as any).showBunzoToast('Erro de conexão.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    });
+</script>

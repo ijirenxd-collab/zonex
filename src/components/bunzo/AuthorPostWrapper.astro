@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+import AuthorProfile from './AuthorProfile.astro';
+import PostStyleTwo from './PostStyleTwo.astro';
+
+const homeConfig = readData('home.json');
+const authorsData = readData('authors.json', []);
+const authorSectionConfig = homeConfig.authorSection || {};
+
+const allPosts = await getCollection('blog');
+
+// Pegar os primeiros 3 autores que tenham posts ou apenas os primeiros 3 autores
+const authorsList = authorsData.slice(0, 3);
+---
+
+<div class="author-wrapper py-section pt-0 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="section-title mb-8 py-5 border-y border-[#ededed] flex justify-between items-center">
+      <h2 class="text-2xl font-bold leading-tight mb-0 font-heading text-heading">
+        {authorSectionConfig.title || "Dos Nossos Autores"}
+      </h2>
+      <div class="carousel-arrow flex items-center">
+        <button class="author-button-prev w-10 h-10 flex items-center justify-center bg-gray-100 text-heading rounded-full text-xl hover:bg-primary hover:text-white transition-all">
+          <i class="icofont-long-arrow-left"></i>
+        </button>
+        <button class="author-button-next w-10 h-10 flex items-center justify-center bg-gray-100 text-heading rounded-full text-xl ml-3 hover:bg-primary hover:text-white transition-all">
+          <i class="icofont-long-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="swiper author-swiper">
+      <div class="swiper-wrapper">
+        {authorsList.map((author: any) => {
+          const authorPosts = allPosts
+            .filter(p => p.data.author?.toLowerCase() === author.name.toLowerCase())
+            .slice(0, 2); // Bunzo costuma mostrar 2-4 posts por autor no slide
+          
+          return (
+            <div class="swiper-slide">
+              <div class="grid grid-cols-12 gap-8">
+                <div class="lg:col-span-8 col-span-12 order-last lg:order-first">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {authorPosts.map(post => (
+                      <PostStyleTwo post={post} />
+                    ))}
+                    {authorPosts.length === 0 && (
+                      <div class="col-span-2 text-center py-10 text-gray-400 italic">
+                        Este autor ainda não publicou artigos.
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div class="lg:col-span-4 col-span-12 order-first lg:order-last">
+                  <AuthorProfile author={author} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Autoplay } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+
+  new Swiper('.author-swiper', {
+    modules: [Navigation, Autoplay],
+    speed: 750,
+    slidesPerView: 1,
+    loop: true,
+    autoHeight: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+    },
+    navigation: {
+      nextEl: '.author-button-next',
+      prevEl: '.author-button-prev',
+    },
+  });
+</script>

@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import CategoryStyleOne from './CategoryStyleOne.astro';
+import { readData } from '../../lib/readData';
+
+const homeConfig = readData('home.json');
+const categoriesConfig = homeConfig.categories || {};
+
+const allPosts = await getCollection('blog');
+const categoriesFromPosts = [...new Set(allPosts.map(p => p.data.category).filter(Boolean))];
+---
+
+<div class="trending-topic py-10">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+      <div class="md:col-span-1">
+        <div class="mb-7 md:mb-0 flex justify-between items-center md:block">
+          <h2 class="text-2xl font-bold leading-tight mb-0 font-heading text-heading">
+            {categoriesConfig.title || "Tópicos em Alta"}
+          </h2>
+          <div class="carousel-arrow flex md:mt-10">
+            <button class="trending-button-prev w-10 h-10 flex items-center justify-center bg-heading text-white rounded-full text-xl hover:bg-primary transition-all shadow-md">
+              <i class="icofont-long-arrow-left"></i>
+            </button>
+            <button class="trending-button-next w-10 h-10 flex items-center justify-center bg-heading text-white rounded-full text-xl ml-3 hover:bg-primary transition-all shadow-md">
+              <i class="icofont-long-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="md:col-span-4 overflow-hidden">
+        <div class="swiper category-swiper">
+          <div class="swiper-wrapper">
+            {categoriesFromPosts.map(category => (
+              <div class="swiper-slide">
+                <CategoryStyleOne category={category} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+
+  new Swiper('.category-swiper', {
+    modules: [Navigation],
+    speed: 750,
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: '.trending-button-next',
+      prevEl: '.trending-button-prev',
+    },
+    breakpoints: {
+      480: { slidesPerView: 2 },
+      768: { slidesPerView: 3 },
+      1024: { slidesPerView: 4 }
+    }
+  });
+</script>

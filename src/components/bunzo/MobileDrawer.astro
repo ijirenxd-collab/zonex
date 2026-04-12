@@ -1,0 +1,108 @@
+---
+import { readData } from '../../lib/readData';
+import SocialIcon from './SocialIcon.astro';
+
+const siteConfig = readData('siteConfig.json');
+const menuData = readData('menu.json', { items: [] });
+const menuItems = menuData.items || [];
+const social = siteConfig.social || {};
+const contact = siteConfig.contact || {};
+---
+
+<div id="mobile-drawer" class="fixed inset-0 z-[150] opacity-0 invisible transition-all duration-300">
+  <!-- Overlay -->
+  <div id="drawer-overlay" class="absolute inset-0 bg-black/80 cursor-pointer"></div>
+  
+  <!-- Drawer Content -->
+  <div class="drawer-inner relative w-[320px] max-w-[85%] h-full bg-white transition-transform duration-300 -translate-x-full overflow-y-auto">
+    <!-- Close Button -->
+    <button id="close-drawer" class="absolute top-0 left-full w-14 h-14 flex items-center justify-center bg-white text-3xl text-heading hover:text-primary transition-colors group">
+      <i class="icofont-close-line group-hover:rotate-180 transition-transform duration-500"></i>
+    </button>
+
+    <div class="p-8">
+      <!-- Logo -->
+      <div class="mb-10">
+        <a href="/">
+          {siteConfig.logo ? (
+            <img src={siteConfig.logo} alt={siteConfig.name} class="h-8">
+          ) : (
+            <span class="text-xl font-bold font-heading text-heading">{siteConfig.name}</span>
+          )}
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="mobile-navigation mb-10">
+        <ul class="space-y-4">
+          {menuItems.map((item: any) => (
+            <li>
+              <a href={item.href} class="block text-lg font-bold text-heading hover:text-primary transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Contact Info -->
+      <div class="pt-8 border-t border-gray-100">
+        <ul class="space-y-4 text-gray-500">
+          {siteConfig.phone && (
+            <li class="flex items-center">
+              <i class="icofont-phone mr-3 text-primary"></i>
+              <a href={`tel:${siteConfig.phone}`} class="hover:text-primary transition-colors">{siteConfig.phone}</a>
+            </li>
+          )}
+          {contact.email && (
+            <li class="flex items-center">
+              <i class="icofont-envelope mr-3 text-primary"></i>
+              <a href={`mailto:${contact.email}`} class="hover:text-primary transition-colors">{contact.email}</a>
+            </li>
+          )}
+        </ul>
+      </div>
+
+      <!-- Social Links -->
+      <div class="mt-10 pt-8 border-t border-gray-100 flex space-x-4">
+        {social.facebook && <SocialIcon icon="icofont-facebook" url={social.facebook} styleClass="text-2xl hover:text-primary" />}
+        {social.twitter && <SocialIcon icon="icofont-twitter" url={social.twitter} styleClass="text-2xl hover:text-primary" />}
+        {social.instagram && <SocialIcon icon="icofont-instagram" url={social.instagram} styleClass="text-2xl hover:text-primary" />}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const drawer = document.getElementById('mobile-drawer');
+  const inner = drawer?.querySelector('.drawer-inner');
+  const overlay = document.getElementById('drawer-overlay');
+  const closeBtn = document.getElementById('close-drawer');
+  const openBtn = document.getElementById('mobile-menu-btn');
+
+  function openDrawer() {
+    drawer?.classList.remove('opacity-0', 'invisible');
+    inner?.classList.remove('-translate-x-full');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawer?.classList.add('opacity-0', 'invisible');
+    inner?.classList.add('-translate-x-full');
+    document.body.style.overflow = '';
+  }
+
+  openBtn?.addEventListener('click', openDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+</script>
+
+<style>
+  #mobile-drawer.invisible {
+    pointer-events: none;
+  }
+  #mobile-drawer:not(.invisible) {
+    opacity: 1;
+    visibility: visible;
+  }
+</style>

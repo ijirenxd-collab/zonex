@@ -1,0 +1,19 @@
+---
+// Componente Breadcrumb.astro
+const { slug, link, url } = Astro.props;
+---
+<div class="breadcrumb flex justify-center bg-[#fafafa] px-5 py-12 md:py-20">
+    <ul class="bg-white flex flex-wrap justify-center px-6 py-3 rounded-xl shadow-sm text-center font-medium">
+        <li class="relative after:right-0 after:top-1/2 after:content-[''] after:w-2 after:h-2 after:bg-primary/20 after:absolute after:transform after:-translate-y-1/2 after:rounded-full mr-4 pr-6 last:pr-0 last:after:hidden">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
+        </li>
+        {link && (
+            <li class="relative after:right-0 after:top-1/2 after:content-[''] after:w-2 after:h-2 after:bg-primary/20 after:absolute after:transform after:-translate-y-1/2 after:rounded-full mr-4 pr-6 last:pr-0 last:after:hidden">
+                <a href={url} class="hover:text-primary transition-colors">{link}</a>
+            </li>
+        )}
+        <li class="relative last:after:hidden text-primary font-bold">
+            {slug}
+        </li>
+    </ul>
+</div>

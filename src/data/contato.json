@@ -1,0 +1,18 @@
+{
+    "seo": {
+        "title": "Contato",
+        "description": "Entre em contato conosco.",
+        "image": ""
+    },
+    "hero": {
+        "title": "Contato",
+        "subtitle": "Tem alguma dúvida, sugestão ou quer fazer uma parceria? Entre em contato."
+    },
+    "cards": {
+        "napTitle": "Contatos",
+        "addressLabel": "Endereço",
+        "phoneLabel": "Telefone",
+        "emailLabel": "E-mail",
+        "formSubmitText": "Enviar Mensagem"
+    }
+}

@@ -1,0 +1,240 @@
+---
+import { readData } from '../lib/readData';
+import { getCollection } from 'astro:content';
+import HeadPlugins from '../plugins/_slots/HeadPlugins.astro';
+import BodyEndPlugins from '../plugins/_slots/BodyEndPlugins.astro';
+
+const siteConfig = readData('siteConfig.json');
+const pluginsConfig = readData('pluginsConfig.json', {});
+const gscVerificationTag = (pluginsConfig as any)?.searchConsole?.verificationTag?.trim() || '';
+
+// Font mapping
+const fontMap: Record<string, { heading: string; body: string; url: string }> = {
+  inter:      { heading: 'Inter',            body: 'Roboto Mono',   url: 'family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500' },
+  outfit:     { heading: 'Outfit',           body: 'Inter',         url: 'family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500' },
+  roboto:     { heading: 'Roboto',           body: 'Open Sans',     url: 'family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600' },
+  poppins:    { heading: 'Poppins',          body: 'Roboto',        url: 'family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500' },
+  montserrat: { heading: 'Montserrat',       body: 'Merriweather',  url: 'family=Montserrat:wght@400;500;600;700&family=Merriweather:wght@400;700' },
+  playfair:   { heading: 'Playfair Display', body: 'Source Sans 3', url: 'family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;600' },
+  lora:       { heading: 'Lora',             body: 'Merriweather',  url: 'family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700' },
+};
+const selectedFont = fontMap[siteConfig.theme?.font || 'poppins'] || fontMap.poppins;
+
+const primaryColor = siteConfig.theme?.primary || '#3B82F6';
+const accentColor = siteConfig.theme?.accent || '#6366F1';
+const darkColor = siteConfig.theme?.dark || '#1E293B';
+
+const menuItems: any[] = readData('menu.json', { items: [] }).items || [];
+const categoriesData = readData('categories.json', []);
+const posts = await getCollection('blog');
+const categoriesFromPosts = [...new Set(posts.map(p => p.data.category).filter(Boolean))];
+const finalCategoriesData = Array.isArray(categoriesData) ? categoriesData : [];
+const allCategories = finalCategoriesData.length > 0 ? finalCategoriesData : categoriesFromPosts;
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  bodyClass?: string;
+}
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  image = '',
+  type = 'website',
+  bodyClass = '',
+} = Astro.props;
+
+const formattedTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
+const siteUrl = siteConfig.url || Astro.url.origin;
+const socialImage = image?.startsWith('http') ? image : image ? new URL(image, siteUrl).toString() : '';
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>{formattedTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Google Search Console verification -->
+  {gscVerificationTag && (
+    gscVerificationTag.startsWith('<')
+      ? <Fragment set:html={gscVerificationTag} />
+      : <meta name="google-site-verification" content={gscVerificationTag} />
+  )}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content={type} />
+  <meta property="og:title" content={formattedTitle} />
+  <meta property="og:description" content={description} />
+  {socialImage && <meta property="og:image" content={socialImage} />}
+  <meta property="og:url" content={Astro.url} />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: 'var(--color-primary)',
+            accent: 'var(--color-accent)',
+            dark: 'var(--color-dark)',
+          },
+          fontFamily: {
+            heading: 'var(--font-heading)',
+            body: 'var(--font-body)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${selectedFont.url}&display=swap`}>
+
+  <!-- CSS vars from CMS config -->
+  <Fragment set:html={`<style>
+    :root {
+      --color-primary: ${primaryColor};
+      --color-accent: ${accentColor};
+      --color-dark: ${darkColor};
+      --font-heading: "${selectedFont.heading}", sans-serif;
+      --font-body: "${selectedFont.body}", sans-serif;
+    }
+    body { font-family: var(--font-body); color: var(--color-dark); }
+    h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading); }
+    .btn-primary { background-color: var(--color-primary); color: #fff; padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 600; display: inline-block; }
+    .btn-primary:hover { opacity: 0.9; }
+    .category-badge { background-color: var(--color-primary); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .post-content h1,.post-content h2,.post-content h3,.post-content h4 { font-family: var(--font-heading); font-weight: 700; margin: 1.5rem 0 0.75rem; }
+    .post-content p { margin-bottom: 1rem; line-height: 1.8; }
+    .post-content ul,.post-content ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+    .post-content li { margin-bottom: 0.25rem; }
+    .post-content img { max-width: 100%; border-radius: 0.5rem; }
+    .post-content a { color: var(--color-primary); text-decoration: underline; }
+    .post-content blockquote { border-left: 4px solid var(--color-primary); padding-left: 1rem; font-style: italic; margin: 1.5rem 0; color: #64748B; }
+    .post-content code { background: #F1F5F9; padding: 0.15rem 0.35rem; border-radius: 0.25rem; font-size: 0.9em; }
+    .post-content pre { background: #1E293B; color: #E2E8F0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
+    .post-content pre code { background: none; padding: 0; }
+  </style>`} />
+
+  <!-- Head plugins: GA, Meta Pixel, AdSense -->
+  <HeadPlugins />
+</head>
+
+<body class={`bg-gray-50 min-h-screen flex flex-col ${bodyClass}`}>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 no-underline">
+        {siteConfig.logo ? (
+          <img src={siteConfig.logo} alt={siteConfig.name} class="h-8" />
+        ) : (
+          <span style={`font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; color: var(--color-dark);`}>{siteConfig.name}</span>
+        )}
+      </a>
+
+      <!-- Nav -->
+      <nav class="hidden md:flex items-center gap-6">
+        {menuItems.length > 0 ? menuItems.map((item: any) => (
+          <div class="relative group">
+            <a href={item.href} class="text-sm font-medium text-gray-700 hover:text-[--color-primary] transition-colors">{item.label}</a>
+            {item.showCategories && allCategories.length > 0 && (
+              <div class="absolute top-full left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-40 hidden group-hover:block z-10">
+                <a href={item.href} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Todos os Artigos</a>
+                {allCategories.map((cat: any) => (
+                  <a href={`/categoria/${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{cat}</a>
+                ))}
+              </div>
+            )}
+          </div>
+        )) : (
+          <>
+            <a href="/" class="text-sm font-medium text-gray-700 hover:text-[--color-primary] transition-colors">Home</a>
+            <a href="/blog" class="text-sm font-medium text-gray-700 hover:text-[--color-primary] transition-colors">Blog</a>
+            <a href="/sobre" class="text-sm font-medium text-gray-700 hover:text-[--color-primary] transition-colors">Sobre</a>
+            <a href="/contato" class="text-sm font-medium text-gray-700 hover:text-[--color-primary] transition-colors">Contato</a>
+          </>
+        )}
+      </nav>
+
+      <!-- Social icons (desktop) -->
+      <div class="hidden md:flex items-center gap-3">
+        {siteConfig.social?.instagram && (
+          <a href={siteConfig.social.instagram} target="_blank" rel="noopener" class="text-gray-500 hover:text-[--color-primary] transition-colors text-sm">IG</a>
+        )}
+        {siteConfig.social?.twitter && (
+          <a href={siteConfig.social.twitter} target="_blank" rel="noopener" class="text-gray-500 hover:text-[--color-primary] transition-colors text-sm">TW</a>
+        )}
+        {siteConfig.social?.youtube && (
+          <a href={siteConfig.social.youtube} target="_blank" rel="noopener" class="text-gray-500 hover:text-[--color-primary] transition-colors text-sm">YT</a>
+        )}
+      </div>
+
+      <!-- Mobile menu toggle -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-700" aria-label="Menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-3">
+        {menuItems.length > 0 ? menuItems.map((item: any) => (
+          <a href={item.href} class="text-sm font-medium text-gray-700 py-1">{item.label}</a>
+        )) : (
+          <>
+            <a href="/" class="text-sm font-medium text-gray-700 py-1">Home</a>
+            <a href="/blog" class="text-sm font-medium text-gray-700 py-1">Blog</a>
+            <a href="/sobre" class="text-sm font-medium text-gray-700 py-1">Sobre</a>
+            <a href="/contato" class="text-sm font-medium text-gray-700 py-1">Contato</a>
+          </>
+        )}
+      </div>
+    </div>
+  </header>
+
+  <!-- Page content -->
+  <main class="flex-1">
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-gray-500">© {new Date().getFullYear()} {siteConfig.name}. Todos os direitos reservados.</p>
+        <nav class="flex items-center gap-4">
+          <a href="/privacidade" class="text-sm text-gray-500 hover:text-gray-700">Privacidade</a>
+          <a href="/termos" class="text-sm text-gray-500 hover:text-gray-700">Termos</a>
+          <a href="/contato" class="text-sm text-gray-500 hover:text-gray-700">Contato</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Body-end plugins: EmailPopup, CookieConsent -->
+  <BodyEndPlugins />
+
+  <!-- Mobile menu script -->
+  <script is:inline>
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      if (menu) menu.classList.toggle('hidden');
+    });
+  </script>
+
+</body>
+</html>

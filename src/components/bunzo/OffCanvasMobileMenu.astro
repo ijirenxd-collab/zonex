@@ -1,0 +1,74 @@
+---
+import ResponsiveMobileMenu from './ResponsiveMobileMenu.astro';
+import SocialIcon from './SocialIcon.astro';
+import { readData } from '../../lib/readData';
+
+const siteConfig = readData('siteConfig.json');
+const social = siteConfig.social || {};
+---
+<div id="offcanvas-menu" class="fixed top-0 left-0 w-screen h-screen opacity-0 invisible z-50 transition-all duration-300">
+    <div class="top-0 left-0 w-full h-full absolute bg-black bg-opacity-80 menu-overlay"></div>
+    <div class="mobile-menu-inner relative w-[300px] md:w-[400px] max-w-[80%] h-full text-left bg-white -translate-x-full transition-all duration-500">
+        <button id="close-menu" aria-label="Close Menu" class="absolute top-0 left-full w-16 h-16 text-4xl text-heading-light hover:text-primary bg-white group">
+            <i class="icofont-close-line group-hover:rotate-180 block transition-all duration-500"></i>
+        </button>
+        <div class="h-full overflow-y-auto">
+            <div class="px-5 py-8">
+                <div class="menu-navigation">
+                    <ResponsiveMobileMenu />
+                </div>
+                <div class="mt-8 border-t pt-8">
+                    <ul class="space-y-2.5 text-heading-light">
+                        {siteConfig.phone && (
+                            <li>
+                                <i class="icofont-phone"></i>
+                                <a class="pl-2.5 hover:text-primary" href={`tel:${siteConfig.phone}`}>{siteConfig.phone}</a>
+                            </li>
+                        )}
+                        {siteConfig.email && (
+                            <li>
+                                <i class="icofont-envelope"></i>
+                                <a class="pl-2.5 hover:text-primary" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+                            </li>
+                        )}
+                    </ul>
+                </div>
+
+                <div class="mt-8">
+                    <div class="flex items-center space-x-7">
+                        {social.facebook && <SocialIcon icon="icofont-facebook" url={social.facebook} styleClass="w-auto h-auto leading-none bg-transparent text-heading-light hover:bg-transparent hover:text-primary" />}
+                        {social.twitter && <SocialIcon icon="icofont-twitter" url={social.twitter} styleClass="w-auto h-auto leading-none bg-transparent text-heading-light hover:bg-transparent hover:text-primary" />}
+                        {social.instagram && <SocialIcon icon="icofont-instagram" url={social.instagram} styleClass="w-auto h-auto leading-none bg-transparent text-heading-light hover:bg-transparent hover:text-primary" />}
+                        {social.linkedin && <SocialIcon icon="icofont-linkedin" url={social.linkedin} styleClass="w-auto h-auto leading-none bg-transparent text-heading-light hover:bg-transparent hover:text-primary" />}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style lang="scss">
+    .show-mobile-menu {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    .show-mobile-menu .mobile-menu-inner {
+        transform: none !important;
+    }
+</style>
+
+<script>
+    const menuBox = document.getElementById('offcanvas-menu');
+    const closeBtn = document.getElementById('close-menu');
+    const overlay = document.querySelector('.menu-overlay');
+
+    function toggleMenu() {
+        menuBox?.classList.toggle('show-mobile-menu');
+    }
+
+    closeBtn?.addEventListener('click', toggleMenu);
+    overlay?.addEventListener('click', toggleMenu);
+
+    // Escutar evento global para abrir menu
+    window.addEventListener('openMobileMenu', toggleMenu);
+</script>

@@ -1,0 +1,14 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import LeadsManager from '../../components/admin/LeadsManager';
+---
+<AdminLayout title="Gestão de Leads" activeSection="leads">
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Leads & Contatos</h1>
+            <p class="text-slate-500 mt-1">Veja quem entrou em contato ou se inscreveu na newsletter.</p>
+        </div>
+    </div>
+    <LeadsManager client:load />
+</AdminLayout>

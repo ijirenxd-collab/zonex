@@ -1,0 +1,21 @@
+{
+    "title": "Sobre TechMaster 2026",
+    "intro": {
+        "title": "Sua Bússola no Mundo dos Eletrônicos",
+        "description": "Nascemos com o objetivo de simplificar o processo de compra de tecnologia. Em um mercado inundado por lançamentos constantes, o TechMaster 2026 é o seu filtro de qualidade.",
+        "image": "/assets/bunzo/images/banners/about-ex-share.jpg",
+        "features": [
+            "Análises Técnicas",
+            "Comparativos Reais",
+            "Foco em Custo-Benefício"
+        ]
+    },
+    "mission": {
+        "title": "Nossa Missão",
+        "description": "Ajudar o consumidor brasileiro a tomar decisões de compra inteligentes em 2026 através de reviews honestos, transparentes e baseados em performance real."
+    },
+    "vision": {
+        "title": "Nossa Visão",
+        "description": "Ser o portal de referência número 1 em recomendações de eletrônicos no Brasil, conectando pessoas aos melhores produtos do mercado."
+    }
+}

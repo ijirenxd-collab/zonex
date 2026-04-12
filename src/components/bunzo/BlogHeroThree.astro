@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+
+const homeData = readData('home.json');
+const allPosts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const heroSlugs = homeData.hero?.slugs || [];
+const heroPosts = heroSlugs.length > 0 
+    ? heroSlugs.map(slug => allPosts.find(p => p.slug === slug)).filter(Boolean)
+    : allPosts.slice(0, homeData.hero?.postLimit || 4);
+
+const authors = readData('authors.json', []);
+
+function formatDate(date: Date) {
+    return new Date(date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+const heroData = homeData.hero || {};
+const heroBg = heroData.image || "/assets/bunzo/images/hero/hero-three.jpg";
+---
+
+<div class="relative flex items-center z-10 min-h-[600px] md:min-h-[820px] bg-cover bg-center bg-no-repeat" style={`background-image: url('${heroBg}');`}>
+    <div class="swiper-container hero-three-slider w-full">
+        <div class="swiper-wrapper">
+            {heroPosts.map((post: any) => (
+                <div class="swiper-slide">
+                    <div class="container mx-auto px-4">
+                        <div class="grid grid-cols-12 items-center">
+                            <div class="col-span-12 lg:col-span-6 order-last lg:order-first">
+                                <div class="content text-white xl:pr-20 mt-10 lg:mt-0">
+                                    <h5 class="text-white mb-6 hover:text-accent transition-colors">
+                                        <span class="text-white/70">Por</span>
+                                        {(() => {
+                                            const a = authors.find((au: any) => au.id === post.data.author) || { name: post.data.author };
+                                            return <span>{a.name}</span>;
+                                        })()}
+                                    </h5>
+                                    <h2 class="text-white text-3xl md:text-4xl lg:text-[45px] font-bold font-heading hover:text-accent transition-colors leading-tight">
+                                        <a href={`/blog/${post.slug}`}>
+                                            {post.data.title}
+                                        </a>
+                                    </h2>
+                                    <div class="text-lg sm:text-xl text-white font-normal pt-4 opacity-90 leading-relaxed font-base" set:html={post.data.description}></div>
+                                    <div class="meta flex items-center mt-8 text-accent font-medium">
+                                        <div class="flex items-center">
+                                            <i class="icofont-ui-calendar"></i>
+                                            <p class="pl-2">{formatDate(post.data.pubDate)}</p>
+                                        </div>
+                                        <div class="flex items-center pl-5">
+                                            <i class="icofont-clock-time"></i>
+                                            <p class="pl-2"> 2 min read</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-span-12 lg:col-span-6 order-first lg:order-last">
+                                <div class="rounded-[10px] overflow-hidden border-2 border-primary lg:h-[400px] p-2.5 sm:p-5 bg-white/5 backdrop-blur-sm">
+                                    <a href={`/blog/${post.slug}`}>
+                                        <img src={post.data.heroImage || post.data.image} alt={post.data.title} class="w-full h-full object-cover rounded-xl shadow-2xl transition-transform duration-500 hover:scale-105">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+        <!-- Pagination -->
+        <div class="swiper-pagination !-translate-x-1/2 bottom-10 md:bottom-15 swiper-pagination-style"></div>
+    </div>
+</div>
+
+<style lang="scss">
+    .swiper-pagination-style :global(.swiper-pagination-bullet) {
+        width: 1rem;
+        height: 1rem;
+        background-color: var(--color-primary);
+        margin-right: 1rem !important;
+        border-radius: 9999px;
+        opacity: 0.5;
+        transition: all 0.3s;
+    }
+    .swiper-pagination-style :global(.swiper-pagination-bullet-active) {
+       background-color: white !important;
+       opacity: 1;
+       width: 2.5rem;
+    }
+</style>
+
+<script>
+    import Swiper from 'swiper';
+    import { Pagination, EffectFade, Autoplay } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/pagination';
+    import 'swiper/css/effect-fade';
+
+    new Swiper('.hero-three-slider', {
+        modules: [Pagination, EffectFade, Autoplay],
+        speed: 800,
+        slidesPerView: 1,
+        spaceBetween: 10,
+        effect: "fade",
+        fadeEffect: {
+            crossFade: true
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+    });
+</script>

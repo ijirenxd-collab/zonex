@@ -1,0 +1,53 @@
+---
+// Componente PostStyleTwo.astro
+import { readData } from '../../lib/readData';
+const { post, excerpt = false, textVariant = "text-xl text-primary" } = Astro.props;
+
+const authors = readData('authors.json', []);
+const postAuthor = authors.find((a: any) => a.id === post.data.author) || { name: post.data.author };
+
+function formatDate(date: Date) {
+    return new Date(date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+}
+---
+<div class="post-style-two group">
+    <div class="post-thumb relative overflow-hidden rounded-xl mb-6 shadow-md transition-all group-hover:shadow-xl">
+        <a href={`/blog/${post.slug}`} class="block">
+            <img src={post.data.heroImage || post.data.image} alt={post.data.title} class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
+        </a>
+        <a href={`/categoria/${post.data.category.toLowerCase().replace(/ /g, '-')}`} class="absolute top-5 left-5 bg-white text-primary text-sm font-bold px-4 py-1.5 rounded-md shadow-sm hover:bg-primary hover:text-white transition-all uppercase tracking-wider">
+            {post.data.category}
+        </a>
+    </div>
+    <div class="post-content">
+        <div class="meta flex items-center mb-4 text-gray-500 text-sm font-medium">
+            <div class="flex items-center">
+                <i class="icofont-ui-calendar"></i>
+                <span class="ml-2">{formatDate(post.data.pubDate)}</span>
+            </div>
+            <div class="flex items-center ml-5">
+                <i class="icofont-clock-time"></i>
+                <span class="ml-2">3 min read</span>
+            </div>
+        </div>
+        <h3 class={`font-bold font-heading transition-colors group-hover:text-primary leading-tight ${textVariant}`}>
+            <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+        </h3>
+        {excerpt && (
+            <p class="mt-4 text-gray-600 line-clamp-2 leading-relaxed font-base">
+                {post.data.description}
+            </p>
+        )}
+        <div class="author flex items-center mt-6 py-4 border-t border-gray-100">
+            <div class="author-info">
+                <p class="text-sm font-bold text-heading">
+                    <span class="text-gray-400 font-normal">Por</span> {postAuthor.name}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

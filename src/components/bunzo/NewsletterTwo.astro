@@ -1,0 +1,62 @@
+---
+import { readData } from '../../lib/readData';
+
+const homeData = readData('home.json');
+const { 
+    bgImage = homeData.newsletter?.bgImage || "/assets/bunzo/images/banners/newsletter-two.jpg", 
+    btnVariant = "bg-accent",
+    title = homeData.newsletter?.title || "Subscribe For Newsletter",
+    description = homeData.newsletter?.description || "Receive the latest news directly in your inbox.",
+    buttonText = homeData.newsletter?.buttonText || "Inscrever-se"
+} = Astro.props;
+---
+<div class="newsletter-style-two py-20 bg-cover bg-center bg-no-repeat rounded-2xl overflow-hidden relative" style={`background-image: url('${bgImage}');`}>
+    <div class="absolute inset-0 bg-primary/80 backdrop-blur-sm"></div>
+    <div class="container mx-auto px-4 relative z-10 text-center text-white max-w-2xl">
+        <h2 class="text-3xl md:text-5xl font-bold font-heading mb-6 text-white">{title}</h2>
+        <p class="text-lg mb-10 opacity-90">{description}</p>
+        <form id="newsletterForm" class="sm:flex block bg-white/10 p-2 rounded-2xl border border-white/20 backdrop-blur-md">
+            <input type="email" id="newsEmail" name="email" placeholder="Seu e-mail" required class="w-full p-4 rounded-xl bg-white/10 focus:bg-white text-white focus:text-primary outline-none transition-all placeholder:text-white/60">
+            <button type="submit" class="text-white px-8 py-4 font-bold rounded-xl hover:scale-105 transition-all min-w-max ml-0 sm:ml-4 mt-4 sm:mt-0 shadow-lg" style={`background-color: var(--color-accent);`}>
+                {buttonText}
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('newsletterForm') as HTMLFormElement;
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = '...';
+
+        const email = (form.querySelector('#newsEmail') as HTMLInputElement).value;
+        const data = {
+            type: 'newsletter',
+            email,
+            subject: 'Inscrição Newsletter'
+        };
+
+        try {
+            const res = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                (window as any).showBunzoToast('Inscrito com sucesso!');
+                form.reset();
+            } else {
+                (window as any).showBunzoToast('Erro ao se inscrever.', 'error');
+            }
+        } catch (err) {
+            (window as any).showBunzoToast('Erro de rede.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    });
+</script>

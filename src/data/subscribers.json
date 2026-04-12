@@ -1,0 +1,20 @@
+[
+  {
+    "email": "asdasd@gmail.com",
+    "name": "sdasd",
+    "subscribedAt": "2026-03-26T21:10:59.851Z",
+    "source": "footer",
+    "tags": [
+      "newsletter"
+    ]
+  },
+  {
+    "email": "gugalimaseo@gmail.com",
+    "name": "",
+    "subscribedAt": "2026-03-26T21:10:43.879Z",
+    "source": "website",
+    "tags": [
+      "newsletter"
+    ]
+  }
+]

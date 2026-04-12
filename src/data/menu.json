@@ -1,0 +1,49 @@
+{
+    "items": [
+        {
+            "label": "Home",
+            "href": "/",
+            "categories": []
+        },
+        {
+            "label": "Blog",
+            "href": "/blog",
+            "categories": [
+                {
+                    "label": "Televisores",
+                    "href": "/categoria/televisores"
+                },
+                {
+                    "label": "Smartphones",
+                    "href": "/categoria/smartphones"
+                },
+                {
+                    "label": "Informatica",
+                    "href": "/categoria/informatica"
+                },
+                {
+                    "label": "Audio",
+                    "href": "/categoria/audio"
+                },
+                {
+                    "label": "Wearables",
+                    "href": "/categoria/wearables"
+                },
+                {
+                    "label": "Eletrodomésticos",
+                    "href": "/categoria/eletrodomesticos"
+                }
+            ]
+        },
+        {
+            "label": "Sobre",
+            "href": "/sobre",
+            "categories": []
+        },
+        {
+            "label": "Contato",
+            "href": "/contato",
+            "categories": []
+        }
+    ]
+}

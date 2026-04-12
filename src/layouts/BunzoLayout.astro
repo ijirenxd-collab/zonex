@@ -1,0 +1,162 @@
+---
+import { readData } from '../lib/readData';
+import Header from '../components/bunzo/Header.astro';
+import Footer from '../components/bunzo/Footer.astro';
+import HeadPlugins from '../plugins/_slots/HeadPlugins.astro';
+import BodyEndPlugins from '../plugins/_slots/BodyEndPlugins.astro';
+
+// Import CSS
+import '../styles/bunzo/icofont.min.css';
+import '../styles/bunzo/swiper.css';
+import '../styles/bunzo/tailwind.css';
+
+const siteConfig = readData('siteConfig.json');
+const pluginsConfig = readData('pluginsConfig.json', {});
+const gscVerificationTag = (pluginsConfig as any)?.searchConsole?.verificationTag?.trim() || '';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  bodyClass?: string;
+}
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  image = '',
+  type = 'website',
+  bodyClass = '',
+} = Astro.props;
+
+const formattedTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
+const siteUrl = siteConfig.url || Astro.url.origin;
+const socialImage = image?.startsWith('http') ? image : image ? new URL(image, siteUrl).toString() : '';
+
+// Mapeamento de fontes profissionais
+const fontPresets: Record<string, { url: string; heading: string; base: string }> = {
+  'poppins': { 
+    url: "family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500", 
+    heading: '"Poppins", sans-serif', 
+    base: '"Poppins", sans-serif' 
+  },
+  'inter': { 
+    url: "family=Inter:wght@400;500;600;700", 
+    heading: '"Inter", sans-serif', 
+    base: '"Inter", sans-serif' 
+  },
+  'lexend': { 
+    url: "family=Lexend:wght@400;500;600;700&family=Inter:wght@400;500", 
+    heading: '"Lexend", sans-serif', 
+    base: '"Inter", sans-serif' 
+  },
+  'playfair': { 
+    url: "family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;500", 
+    heading: '"Playfair Display", serif', 
+    base: '"Source Sans 3", sans-serif' 
+  },
+  'outfit': { 
+    url: "family=Outfit:wght@500;600;700&family=Open+Sans:wght@400;500", 
+    heading: '"Outfit", sans-serif', 
+    base: '"Open Sans", sans-serif' 
+  }
+};
+
+const selectedFont = fontPresets[siteConfig.theme?.font] || fontPresets.poppins;
+const selectedFontUrl = selectedFont.url;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR" style={`--color-primary: ${siteConfig.theme?.primary || '#8e61b9'}; --color-accent: ${siteConfig.theme?.accent || '#ffb16e'}; --color-heading: ${siteConfig.theme?.dark || '#111827'}; --font-heading: ${selectedFont.heading}; --font-base: ${selectedFont.base};`}>
+<head>
+  <meta charset="UTF-8">
+  <title>{formattedTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="/assets/bunzo/images/favicon.ico" />
+
+  <!-- Google Search Console verification -->
+  {gscVerificationTag && (
+    gscVerificationTag.startsWith('<')
+      ? <Fragment set:html={gscVerificationTag} />
+      : <meta name="google-site-verification" content={gscVerificationTag} />
+  )}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content={type} />
+  <meta property="og:title" content={formattedTitle} />
+  <meta property="og:description" content={description} />
+  {socialImage && <meta property="og:image" content={socialImage} />}
+  <meta property="og:url" content={Astro.url} />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${selectedFontUrl}&display=swap`}>
+
+
+  <!-- Head plugins: GA, Meta Pixel, AdSense -->
+  <HeadPlugins />
+</head>
+
+<body class={`bg-white min-h-screen flex flex-col font-base text-body ${bodyClass}`}>
+
+  <!-- Header -->
+  <Header />
+
+  <!-- Page content -->
+  <main class="flex-1 overflow-hidden">
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <Footer />
+
+  <!-- Body-end plugins: EmailPopup, CookieConsent -->
+  <BodyEndPlugins />
+
+  <!-- Custom Global Toast -->
+  <div id="bunzo-toast" class="fixed bottom-10 right-10 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-white border-l-4 border-primary shadow-2xl rounded-xl p-5 flex items-center gap-4 min-w-[300px]">
+        <div id="toast-icon" class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <i class="icofont-check-circled text-xl"></i>
+        </div>
+        <div>
+            <p id="toast-message" class="text-sm font-bold text-slate-800">Mensagem</p>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Notificação</p>
+        </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    window.showBunzoToast = (message, type = 'success') => {
+        const toast = document.getElementById('bunzo-toast');
+        const msgEl = document.getElementById('toast-message');
+        const iconEl = document.getElementById('toast-icon');
+        
+        msgEl.innerText = message;
+        
+        if (type === 'success') {
+            toast.firstElementChild.style.borderLeftColor = 'var(--color-primary)';
+            iconEl.style.color = 'var(--color-primary)';
+            iconEl.style.backgroundColor = 'rgba(var(--color-primary-rgb), 0.1)';
+            iconEl.innerHTML = '<i class="icofont-check-circled text-xl"></i>';
+        } else {
+            toast.firstElementChild.style.borderLeftColor = '#ef4444';
+            iconEl.style.color = '#ef4444';
+            iconEl.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            iconEl.innerHTML = '<i class="icofont-error text-xl"></i>';
+        }
+
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+
+        setTimeout(() => {
+            toast.classList.add('translate-y-20', 'opacity-0');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 4000);
+    };
+  </script>
+</body>
+</html>

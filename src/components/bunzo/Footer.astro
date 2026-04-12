@@ -1,0 +1,126 @@
+---
+import { readData } from '../../lib/readData';
+import SocialIcon from './SocialIcon.astro';
+
+const siteConfig = readData('siteConfig.json');
+const social = siteConfig.social || {};
+const categories = readData('categories.json', []);
+---
+
+<div class="bg-primary">
+    <div class="footer-main py-section">
+        <div class="container mx-auto px-4 text-white">
+            <div class="grid grid-cols-12 gap-7">
+                <!-- Coluna Subscribe -->
+                <div class="col-span-12 sm:col-span-6 xl:col-span-4">
+                    <div class="widget lg:pr-10">
+                        <h4 class="text-white text-2xl font-bold font-heading leading-none mb-8">{siteConfig.footer?.subscribeTitle || "Inscreva-se"}</h4>
+                        <form id="footerForm" class="body space-y-4">
+                            <input type="text" id="footerName" name="name" placeholder="Seu Nome" required class="bg-transparent border-2 border-white/10 py-4 px-3 text-white rounded-lg font-medium w-full focus:outline-none focus:border-accent">
+                            <input type="email" id="footerEmail" name="email" placeholder="Seu e-mail" required class="bg-transparent border-2 border-white/10 py-4 px-3 text-white rounded-lg font-medium w-full focus:outline-none focus:border-accent">
+                            <button type="submit" class="mt-5 text-white px-8 py-3 rounded-md font-bold hover:bg-white hover:text-primary transition-all inline-block shadow-lg" style={`background-color: var(--color-accent);`}>
+                                {siteConfig.footer?.subscribeBtn || "Inscrever Agora"}
+                            </button>
+                        </form>
+                        <div class="flex mt-8 space-x-3">
+                            {social.facebook && <SocialIcon icon="icofont-facebook" url={social.facebook} styleClass="w-10 h-10 leading-10 rounded-md bg-white/10 text-white hover:bg-accent text-center" />}
+                            {social.twitter && <SocialIcon icon="icofont-twitter" url={social.twitter} styleClass="w-10 h-10 leading-10 rounded-md bg-white/10 text-white hover:bg-accent text-center" />}
+                            {social.instagram && <SocialIcon icon="icofont-instagram" url={social.instagram} styleClass="w-10 h-10 leading-10 rounded-md bg-white/10 text-white hover:bg-accent text-center" />}
+                            {social.linkedin && <SocialIcon icon="icofont-linkedin" url={social.linkedin} styleClass="w-10 h-10 leading-10 rounded-md bg-white/10 text-white hover:bg-accent text-center" />}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-12 xl:col-span-8">
+                    <div class="grid grid-cols-1 gap-10 sm:grid-cols-3 xl:pl-5 mt-10 xl:mt-0">
+                        <!-- Coluna Empresa -->
+                        <div class="widget">
+                            <h4 class="text-white text-xl font-bold font-heading leading-none mb-8">{siteConfig.footer?.col1Title || "Empresa"}</h4>
+                            <ul class="space-y-4 font-medium opacity-90">
+                                <li><a href="/sobre" class="hover:text-[#a50eff] transition-colors">Sobre Nós</a></li>
+                                <li><a href="/contato" class="hover:text-[#a50eff] transition-colors">Contato</a></li>
+                                <li><a href="/blog" class="hover:text-[#a50eff] transition-colors">Blog</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Links Rápidos -->
+                        <div class="widget">
+                            <h4 class="text-white text-xl font-bold font-heading leading-none mb-8">{siteConfig.footer?.col2Title || "Links Rápidos"}</h4>
+                            <ul class="space-y-4 font-medium opacity-90">
+                                <li><a href="/privacidade" class="hover:text-[#a50eff] transition-colors">Privacidade</a></li>
+                                <li><a href="/termos" class="hover:text-[#a50eff] transition-colors">Termos & Condições</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Categorias -->
+                        <div class="widget">
+                            <h4 class="text-white text-xl font-bold font-heading leading-none mb-8">Categorias</h4>
+                            <ul class="space-y-4 font-medium opacity-90">
+                                {categories.length > 0 ? categories.slice(0, 8).map((cat: string) => (
+                                    <li>
+                                        <a href={`/categoria/${cat.toLowerCase().replace(/ /g, '-')}`} class="hover:text-[#a50eff] transition-colors">
+                                            {cat}
+                                        </a>
+                                    </li>
+                                )) : (
+                                    <>
+                                        <li><a href="/categoria/autismo" class="hover:text-[#a50eff] transition-colors">Autismo</a></li>
+                                        <li><a href="/categoria/enfermagem" class="hover:text-[#a50eff] transition-colors">Enfermagem</a></li>
+                                        <li><a href="/categoria/saude" class="hover:text-[#a50eff] transition-colors">Saúde</a></li>
+                                        <li><a href="/categoria/educacao" class="hover:text-[#a50eff] transition-colors">Educação</a></li>
+                                    </>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Copyright -->
+    <div class="copyright border-t border-white/10 py-6">
+        <div class="container mx-auto px-4">
+            <div class="text-sm text-center text-white opacity-70 font-medium">
+                <p>© {new Date().getFullYear()} {siteConfig.name} - {siteConfig.footer?.copyright || "Todos os direitos reservados."}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const footerForm = document.getElementById('footerForm') as HTMLFormElement;
+    footerForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = footerForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = '...';
+
+        const data = {
+            type: 'newsletter',
+            name: (footerForm.querySelector('#footerName') as HTMLInputElement).value,
+            email: (footerForm.querySelector('#footerEmail') as HTMLInputElement).value,
+            source: 'footer'
+        };
+
+        try {
+            const res = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                (window as any).showBunzoToast('Inscrito com sucesso!');
+                footerForm.reset();
+            } else {
+                (window as any).showBunzoToast('Erro ao se inscrever.', 'error');
+            }
+        } catch (err) {
+            (window as any).showBunzoToast('Erro de conexão.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    });
+</script>

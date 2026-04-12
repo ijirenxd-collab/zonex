@@ -1,0 +1,48 @@
+---
+import SocialIcon from './SocialIcon.astro';
+
+interface Props {
+  author: {
+    name: string;
+    description: string;
+    avatar?: string;
+    social?: {
+      facebook?: string;
+      twitter?: string;
+      instagram?: string;
+      linkedin?: string;
+    }
+  };
+}
+
+const { author } = Astro.props;
+const slug = author.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+---
+
+<div class="author-profile text-center border border-[#ededed] rounded-[10px] py-10 px-6 relative bg-white h-full flex flex-col items-center justify-center">
+  <div class="gravatar w-32 h-32 m-auto border border-[#ededed] p-2 rounded-full overflow-hidden mb-6">
+    <img class="rounded-full w-full h-full object-cover" src={author.avatar || "/assets/bunzo/images/author/1.jpg"} alt={author.name}>
+  </div>
+  
+  <h3 class="mb-4 text-xl font-bold font-heading text-heading">
+    <a href={`/autor/${slug}`} class="hover:text-primary transition-colors">{author.name}</a>
+  </h3>
+  
+  <p class="text-gray-500 text-sm mb-8 line-clamp-3">
+    {author.description}
+  </p>
+  
+  <a 
+    href={`/autor/${slug}`} 
+    class="bg-gray-100 py-3.5 px-8 rounded-lg inline-block hover:bg-primary hover:text-white mb-8 transition-all font-semibold"
+  >
+    Ver Perfil <i class="icofont-long-arrow-right text-xl align-middle ml-2"></i>
+  </a>
+  
+  <div class="flex justify-center space-x-3">
+    {author.social?.facebook && <SocialIcon icon="icofont-facebook" url={author.social.facebook} styleClass="w-9 h-9 leading-9 rounded-full bg-gray-50 hover:bg-primary hover:text-white" />}
+    {author.social?.twitter && <SocialIcon icon="icofont-twitter" url={author.social.twitter} styleClass="w-9 h-9 leading-9 rounded-full bg-gray-50 hover:bg-primary hover:text-white" />}
+    {author.social?.instagram && <SocialIcon icon="icofont-instagram" url={author.social.instagram} styleClass="w-9 h-9 leading-9 rounded-full bg-gray-50 hover:bg-primary hover:text-white" />}
+    {author.social?.linkedin && <SocialIcon icon="icofont-linkedin" url={author.social.linkedin} styleClass="w-9 h-9 leading-9 rounded-full bg-gray-50 hover:bg-primary hover:text-white" />}
+  </div>
+</div>

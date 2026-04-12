@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BunzoLayout from '../../layouts/BunzoLayout.astro';
+import PostDetails from '../../components/bunzo/PostDetails.astro';
+import Breadcrumb from '../../components/bunzo/Breadcrumb.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<BunzoLayout title={`${post.data.title} - Bunzo`}>
+    <div class="post-details-page">
+        <Breadcrumb slug={post.data.title} link="Blog" url="/blog" />
+        
+        <div class="py-section">
+            <div class="container mx-auto px-4">
+                <PostDetails post={post} />
+            </div>
+        </div>
+    </div>
+</BunzoLayout>

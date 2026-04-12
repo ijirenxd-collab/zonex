@@ -1,0 +1,29 @@
+---
+import WidgetTitle from './WidgetTitle.astro';
+import { readData } from '../../lib/readData';
+
+const homeConfig = readData('home.json');
+const newsletter = homeConfig.newsletter || {};
+---
+
+<div class="sidebar-widget mb-10 bg-primary rounded-[10px] p-8 text-white">
+  <h3 class="text-xl font-bold mb-4 font-heading">{newsletter.title || "Newsletter"}</h3>
+  <p class="text-white/80 text-sm mb-6 leading-relaxed">
+    {newsletter.description || "Assine para receber as últimas notícias."}
+  </p>
+  
+  <form class="space-y-4" onsubmit="return false;">
+    <input 
+      type="email" 
+      placeholder={newsletter.placeholder || "Seu e-mail"} 
+      required 
+      class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all font-medium text-sm"
+    >
+    <button 
+      type="submit"
+      class="w-full bg-white text-primary py-3 rounded-lg font-bold hover:bg-gray-50 transition-all shadow-md text-sm"
+    >
+      {newsletter.btnText || "Inscrever"}
+    </button>
+  </form>
+</div>

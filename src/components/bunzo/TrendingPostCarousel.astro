@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+import PostStyleTwo from './PostStyleTwo.astro';
+
+const homeData = readData('home.json');
+const allPosts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const trendingSlugs = homeData.trending?.slugs || [];
+const trendingPosts = trendingSlugs.length > 0
+    ? trendingSlugs.map(slug => allPosts.find(p => p.slug === slug)).filter(Boolean)
+    : allPosts.slice(0, homeData.trending?.postLimit || 6);
+const trendingTitle = homeData.trending?.title || "Em Destaque";
+---
+<div class="popular-post py-section bg-[#fcfaff]">
+    <div class="container mx-auto px-4">
+        <div class="section-title mb-12 flex justify-between items-center">
+            <h2 class="text-3xl md:text-4xl text-primary font-bold font-heading mb-0">{trendingTitle}</h2>
+            <div class="carousel-arrow flex items-center">
+                <div class="swiper-button-prev-trending cursor-pointer w-12 h-12 flex items-center justify-center border-2 border-primary/10 rounded-lg text-2xl text-primary ml-3 hover:bg-primary hover:text-white transition-all">
+                    <i class="icofont-long-arrow-left"></i>
+                </div>
+                <div class="swiper-button-next-trending cursor-pointer w-12 h-12 flex items-center justify-center border-2 border-primary/10 rounded-lg text-2xl text-primary ml-3 hover:bg-primary hover:text-white transition-all">
+                    <i class="icofont-long-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swiper-container trending-slider overflow-hidden">
+            <div class="swiper-wrapper">
+                {trendingPosts.map((post: any) => (
+                    <div class="swiper-slide">
+                        <PostStyleTwo post={post} textVariant="lg:text-2xl text-primary hover:text-accent" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    import Swiper from 'swiper';
+    import { Navigation, Autoplay } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/navigation';
+
+    new Swiper('.trending-slider', {
+        modules: [Navigation, Autoplay],
+        speed: 750,
+        loop: false,
+        spaceBetween: 30,
+        navigation: {
+            nextEl: '.swiper-button-next-trending',
+            prevEl: '.swiper-button-prev-trending',
+        },
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        breakpoints: {
+            992: { slidesPerView: 3 },
+            768: { slidesPerView: 2 },
+            320: { slidesPerView: 1 }
+        }
+    });
+</script>

@@ -1,0 +1,64 @@
+---
+import { readData } from '../../lib/readData';
+import SocialIcon from './SocialIcon.astro';
+
+const siteConfig = readData('siteConfig.json');
+const social = siteConfig.social || {};
+const contact = siteConfig.contact || {};
+
+const socialLinks = [
+  { icon: 'icofont-facebook', url: social.facebook },
+  { icon: 'icofont-twitter', url: social.twitter },
+  { icon: 'icofont-instagram', url: social.instagram },
+  { icon: 'icofont-youtube', url: social.youtube },
+].filter(link => link.url);
+---
+
+<div class="header-top bg-primary py-2 text-white">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-4 items-center">
+            <!-- Left: Links rápidos -->
+            <div class="header-top__menu">
+                <ul class="flex justify-center md:justify-start">
+                    <li class="mr-4 pr-5 relative last:mr-0 after:content-[''] after:absolute after:w-1 after:h-1 after:top-1/2 after:transform after:-translate-y-1/2 after:right-0 after:bg-white after:rounded-full last:after:content-none">
+                        <a href="/contato" class="text-white hover:opacity-80 transition-opacity">Ajuda</a>
+                    </li>
+                    <li class="mr-4 pr-5 relative last:mr-0 after:content-[''] after:absolute after:w-1 after:h-1 after:top-1/2 after:transform after:-translate-y-1/2 after:right-0 after:bg-white after:rounded-full last:after:content-none">
+                        <a href="/sobre" class="text-white hover:opacity-80 transition-opacity">Sobre</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Middle: Informações de Contato -->
+            <div class="header-top__info">
+                <ul class="flex justify-center text-white space-x-6 md:space-x-10">
+                    {siteConfig.phone && (
+                        <li class="flex items-center">
+                            <i class="icofont-phone mr-2 text-xl"></i>
+                            <a class="text-white text-sm" href={`tel:${siteConfig.phone}`}>{siteConfig.phone}</a>
+                        </li>
+                    )}
+                    {contact.email && (
+                        <li class="flex items-center">
+                            <i class="icofont-envelope mr-2 text-lg"></i>
+                            <a class="text-white text-sm" href={`mailto:${contact.email}`}>{contact.email}</a>
+                        </li>
+                    )}
+                </ul>
+            </div>
+
+            <!-- Right: Redes Sociais -->
+            <div class="header-top__social flex justify-center md:justify-end items-center order-first md:order-last">
+                <div class="flex items-center space-x-2">
+                    {socialLinks.map(link => (
+                        <SocialIcon 
+                            icon={link.icon} 
+                            url={link.url} 
+                            styleClass="h-8 w-8 leading-8 !rounded-full !bg-transparent border border-white/20 !text-white hover:!bg-white hover:!text-primary"
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+---
+import SocialIcon from './SocialIcon.astro';
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+import { readData } from '../../lib/readData';
+const authors = readData('authors.json', []);
+
+function formatDate(date: Date) {
+    return new Date(date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+---
+<article class="text-center max-w-4xl mx-auto">
+    <ul class="meta flex justify-center text-[#626262] mb-8 font-medium">
+        <li class="relative mr-4 pr-6 after:w-1 after:h-1 after:bg-primary after:top-1/2 after:right-0 after:transform after:-translate-y-1/2 after:absolute after:content-[''] after:rounded-full last:after:hidden">
+            <span class="text-[#9b9ea1]">Por</span>
+            {(() => {
+                const a = authors.find((au: any) => au.id === post.data.author) || { name: post.data.author };
+                return <span class="ml-1 font-bold text-heading">{a.name}</span>;
+            })()}
+        </li>
+        <li class="relative mr-4 pr-6 after:w-1 after:h-1 after:bg-primary after:top-1/2 after:right-0 after:transform after:-translate-y-1/2 after:absolute after:content-[''] after:rounded-full last:after:hidden">
+            {formatDate(post.data.pubDate)}
+        </li>
+        <li class="relative last:after:hidden">3 min read</li>
+    </ul>
+    
+    <div class="title mb-8">
+        <h1 class="text-3xl md:text-5xl font-bold font-heading leading-tight text-primary">{post.data.title}</h1>
+    </div>
+
+    <div class="categories mt-10 mb-12 space-x-3">
+        <a href={`/categoria/${post.data.category.toLowerCase().replace(/ /g, '-')}`} class="category bg-[#f4eaff] text-primary font-bold capitalize rounded-xl px-6 py-2.5 inline-block hover:bg-primary hover:text-white transition-all">
+            {post.data.category}
+        </a>
+    </div>
+
+    <div class="featured-image mb-12">
+        <img src={post.data.heroImage || post.data.image} alt={post.data.title} class="w-full rounded-2xl shadow-2xl border border-gray-100">
+    </div>
+
+    <div class="content text-left mt-10 prose prose-lg max-w-none text-gray-700 leading-relaxed font-base prose-headings:font-heading prose-headings:text-primary prose-a:text-[#a50eff] prose-img:rounded-xl">
+        <Content />
+    </div>
+
+    <div class="share-post sm:flex justify-between items-center py-8 mt-16 border-y border-gray-100 italic">
+        <h4 class="text-xl font-bold text-primary mb-4 sm:mb-0">Compartilhe este artigo:</h4>
+        <div class="social-link flex justify-center sm:justify-end space-x-3">
+            <SocialIcon icon="icofont-facebook" url="#" styleClass="w-10 h-10 leading-10 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white text-center transition-all" />
+            <SocialIcon icon="icofont-twitter" url="#" styleClass="w-10 h-10 leading-10 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white text-center transition-all" />
+            <SocialIcon icon="icofont-linkedin" url="#" styleClass="w-10 h-10 leading-10 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white text-center transition-all" />
+        </div>
+    </div>
+</article>

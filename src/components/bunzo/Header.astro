@@ -1,0 +1,79 @@
+---
+import Navigation from './Navigation.astro';
+import OffCanvasMobileMenu from './OffCanvasMobileMenu.astro';
+import OffcanvasSearchBox from './OffcanvasSearchBox.astro';
+import { readData } from '../../lib/readData';
+
+const siteConfig = readData('siteConfig.json');
+---
+
+<header id="header-main" class="header-main transition-all border-b border-gray-100">
+    <div class="py-4 lg:py-1">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-4 items-center justify-between">
+                <div class="col-span-2 lg:col-span-1 logo">
+                    <a href="/" class="flex items-center gap-3">
+                        {siteConfig.logo ? (
+                            <img src={siteConfig.logo} alt={siteConfig.name} class="h-10 w-auto object-contain">
+                        ) : (
+                            <span class="text-2xl font-black text-primary tracking-tighter">{siteConfig.name}</span>
+                        )}
+                    </a>
+                </div>
+                <div class="col-span-2 lg:col-span-3 hidden lg:block ml-auto">
+                    <Navigation color-variant="text-primary" />
+                </div>
+                <div class="col-span-2 text-right block lg:hidden">
+                    <button id="open-search-btn" class="text-primary text-xl w-11 h-11 leading-10 rounded-md border-[1px] border-primary hover:bg-primary hover:text-white transition-all mr-2">
+                        <i class="icofont-search"></i>
+                    </button>
+                    <button id="open-menu-btn" class="text-primary text-xl w-11 h-11 leading-10 rounded-md border-[1px] border-primary hover:bg-primary hover:text-white transition-all">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" class="inline-block" height="1.5em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M904 160H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0 624H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0-312H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<OffCanvasMobileMenu />
+<OffcanvasSearchBox />
+
+<style lang="scss">
+    .is-sticky {
+        @apply fixed top-0 left-0 w-full bg-white z-50 shadow-md animate-fadeInDown;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -100%, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+<script>
+    const header = document.getElementById('header-main');
+    const openMenuBtn = document.getElementById('open-menu-btn');
+    const openSearchBtn = document.getElementById('open-search-btn');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY >= 200) {
+            header?.classList.add('is-sticky');
+        } else {
+            header?.classList.remove('is-sticky');
+        }
+    });
+
+    openMenuBtn?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('openMobileMenu'));
+    });
+
+    openSearchBtn?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('openSearch'));
+    });
+</script>

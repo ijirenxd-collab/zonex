@@ -1,0 +1,7 @@
+---
+// Componente SocialIcon.astro
+const { icon, url, styleClass = "w-10 h-10 leading-10 rounded-md bg-gray-100 text-heading hover:bg-primary hover:text-white text-center transition-all" } = Astro.props;
+---
+<a href={url} target="_blank" rel="noopener noreferrer" class={styleClass}>
+    <i class={icon}></i>
+</a>

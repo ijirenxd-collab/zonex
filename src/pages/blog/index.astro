@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BunzoLayout from '../../layouts/BunzoLayout.astro';
+import Breadcrumb from '../../components/bunzo/Breadcrumb.astro';
+import PostStyleTwo from '../../components/bunzo/PostStyleTwo.astro';
+
+const allPosts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BunzoLayout title="Blog - Todos os Artigos">
+    <div class="blog-posts">
+        <Breadcrumb slug="Todos os Artigos" />
+
+        <div class="py-section">
+            <div class="container mx-auto px-4">
+                <h1 class="sr-only">Todos os Artigos</h1>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-[30px] gap-y-[50px]">
+                    {allPosts.map((post) => (
+                        <PostStyleTwo post={post} excerpt={true} textVariant="lg:text-2xl text-primary hover:text-accent" />
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+</BunzoLayout>

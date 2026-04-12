@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+import PostStyleTwo from './PostStyleTwo.astro';
+
+const homeData = readData('home.json');
+const allPosts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const { title = homeData.recentPosts?.title || "Artigos Recentes", searchPlaceholder = homeData.recentPosts?.searchPlaceholder || "Buscar..", postLimit = homeData.recentPosts?.postLimit || 9 } = Astro.props;
+const recentPosts = allPosts.slice(0, postLimit);
+---
+<div class="py-section bg-white">
+    <div class="container mx-auto px-4">
+        <div class="section-title mb-12 lg:mb-15 flex justify-between items-center border-b pb-6 border-gray-100">
+            <h2 class="text-3xl md:text-4xl text-primary font-bold font-heading mb-0">{title}</h2>
+            <div class="relative hidden lg:block w-72">
+                <input type="text" id="recent-search" placeholder={searchPlaceholder} class="text-heading-light border-1 border-gray-200 rounded-md pl-4 pr-10 py-3 w-full focus:outline outline-primary outline-1 transition-all">
+                <button type="submit" id="exec-recent-search" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-primary hover:text-heading transition-colors">
+                    <i class="icofont-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-[30px] gap-y-12">
+            {recentPosts.map((post: any) => (
+                <PostStyleTwo post={post} excerpt={true} textVariant="lg:text-2xl text-primary hover:text-accent" />
+            ))}
+        </div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('recent-search') as HTMLInputElement;
+    const btn = document.getElementById('exec-recent-search');
+
+    function doSearch() {
+        if (input?.value) {
+            window.location.href = `/search/${input.value}`;
+        }
+    }
+
+    btn?.addEventListener('click', doSearch);
+    input?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') doSearch();
+    });
+</script>

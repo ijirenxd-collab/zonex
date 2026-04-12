@@ -1,0 +1,31 @@
+---
+import BunzoLayout from '../layouts/BunzoLayout.astro';
+import BlogHeroThree from '../components/bunzo/BlogHeroThree.astro';
+import RecentPostWrapperTwo from '../components/bunzo/RecentPostWrapperTwo.astro';
+import NewsletterTwo from '../components/bunzo/NewsletterTwo.astro';
+import TrendingPostCarousel from '../components/bunzo/TrendingPostCarousel.astro';
+import TrustedPartnerCarousel from '../components/bunzo/TrustedPartnerCarousel.astro';
+import { readData } from '../lib/readData';
+
+const homeData = readData('home.json');
+
+// SEO e Metadados serão gerenciados via BunzoLayout
+---
+
+<BunzoLayout>
+    <div class="home-three">
+        <BlogHeroThree />
+        <RecentPostWrapperTwo />
+        <div class="container mx-auto px-4 mb-20">
+            <NewsletterTwo />
+        </div>
+        <TrendingPostCarousel />
+        {homeData.showPartners !== false && <TrustedPartnerCarousel />}
+    </div>
+</BunzoLayout>
+
+<style>
+    .home-three {
+        @apply overflow-hidden;
+    }
+</style>
