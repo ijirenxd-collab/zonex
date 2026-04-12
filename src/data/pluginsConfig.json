@@ -59,7 +59,9 @@
     },
     "affiliates": {
         "enabled": true,
-        "amazonTag": "",
+        "amazonTag": "compracompl00-20",
+        "amazonAccessKey": "AKPAZBX2MA1776000119",
+        "amazonSecretKey": "cJK5aTs7Uhg6+kmjBtTkx75Qy6AVOVKICHkbZt7M",
         "defaultButtonText": "Ver na Amazon",
         "buttonColor": "#FF9900",
         "showPrices": true,
